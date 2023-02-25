@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,9 +23,8 @@ public class HelloControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    public void hello가_리턴된다() throws Exception {
+    public void testHello() throws Exception {
         String hello = "hello";
-
         mockMvc.perform(get("/hello")) // 다음 주소로 HTTP GET 요청, 체이닝 지원 -> 여러 검증을 이어서 할 수 있음
                 .andExpect(status().isOk()) // 200, 404, 500 등 HTTP Header Status 검증
                 .andExpect(content().string(hello)); // 리턴값(content)이 맞는지 검증
