@@ -26,7 +26,8 @@ repositories {
 
 dependencies { // 버전 명시를 생략해야 ext 에서 설정한 변수(버전) 적용 가능
     implementation('org.springframework.boot:spring-boot-starter-web')
-    implementation('org.projectlombok:lombok')
+    compileOnly('org.projectlombok:lombok')
+    annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
 
