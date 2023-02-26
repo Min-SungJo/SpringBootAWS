@@ -28,4 +28,9 @@ public class Posts { // JPA 를 사용하면, DB 데이터 수정을 원할 때,
         this.content=content;
         this.author=author;
     }
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }
