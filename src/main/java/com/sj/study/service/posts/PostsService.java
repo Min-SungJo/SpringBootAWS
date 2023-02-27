@@ -37,6 +37,7 @@ public class PostsService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
         return new PostsResponseDto(entity);
     }
+
     @Transactional(readOnly = true) // 트랜잭션 범위는 유지, 조회기능만 남겨서 조회 속도 개선 (등록,수정,삭제 기능이 전혀 없는 서비스 메소드에서 사용하길)
     public List<PostsListResponseDto> findAllDesc() {
         // postRepository 결과로 넘어온 Posts 의 Stream 을 map 을 통해 PostsListResponseDto 변환
@@ -44,6 +45,13 @@ public class PostsService {
         return postsRepository.findAllDesc().stream()
                 .map(PostsListResponseDto::new) // (.map(posts -> new PostsListResponseDto(posts)))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Posts posts = postsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
+        postsRepository.delete(posts);
     }
 
 }
