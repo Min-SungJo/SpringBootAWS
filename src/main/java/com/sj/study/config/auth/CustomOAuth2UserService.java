@@ -1,5 +1,6 @@
 package com.sj.study.config.auth;
 
+import com.sj.study.config.auth.dto.OAuthAttributes;
 import com.sj.study.domain.user.User;
 import com.sj.study.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
