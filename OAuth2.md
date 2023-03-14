@@ -37,6 +37,7 @@ spring.security.oauth2.client.registration.naver.scope=name,email,profile_image
 spring.security.oauth2.client.registration.naver.client-name=Naver
    > ### provider
    > spring.security.oauth2.client.provider.naver.authorization-uri=https://nid.naver.com/oauth2.0/authorize   
+   spring.security.oauth2.client.provider.naver.token-uri=https://nid.naver.com/oauth2.0/token   
 spring.security.oauth2.client.provider.naver.user-info-uri=https://openapi.naver.com/v1/nid/me   
 기준이 되는 user_name 의 이름을 네이버에서는 response 로 함 -> 네이버 회원 조회 시 반환되는 JSON 형태에 따름   
 spring.security.oauth2.client.provider.naver.user-name-attribute=response   
