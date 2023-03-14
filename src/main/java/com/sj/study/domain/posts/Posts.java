@@ -23,7 +23,7 @@ public class Posts extends BaseTimeEntity { // JPA 를 사용하면, DB 데이�
 
     private String author;
 
-    @Builder // Setter 대신, Builder 를 통해 생성자 값 채운 뒤 DB 에 삽입, 어느 필드에 어떤 값을 채울지 명확히 인지 가능하다는 장점.ww
+    @Builder // Setter 대신, Builder 를 통해 생성자 값 채운 뒤 DB 에 삽입, 어느 필드에 어떤 값을 채울지 명확히 인지 가능하다는 장점.
     public Posts(String title, String content, String author){
         this.title=title;
         this.content=content;

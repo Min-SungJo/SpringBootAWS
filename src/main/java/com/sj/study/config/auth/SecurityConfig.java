@@ -2,14 +2,61 @@ package com.sj.study.config.auth;
 
 import com.sj.study.domain.user.Role;
 import lombok.RequiredArgsConstructor;
+//import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+//import org.springframework.security.web.SecurityFilterChain;
 
 @RequiredArgsConstructor
+@Configuration
 @EnableWebSecurity // Spring Security 설정을 활성화
+//public class SecurityConfig {
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomOAuth2UserService customOAuth2UserService;
+
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception { // HttpSecurity 는 낮은 버전(Spring Boot 버전)에서 호환되지 않음
+//        http
+//                .csrf().disable()
+//                .headers().frameOptions().disable()
+//                .and()
+//                .authorizeHttpRequests()
+//                .antMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**", "/profile").permitAll()
+//                .antMatchers("/api/v1/**").hasRole(Role.USER.name())
+//                .anyRequest().authenticated()
+//                .and()
+//                .logout()
+//                .logoutSuccessUrl("/")
+//                .and()
+//                .oauth2Login()
+//                .userInfoEndpoint()
+//                .userService(customOAuth2UserService);
+//
+//        return http.build();
+//    }
+
+//    /**람다식으로 변환*/
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception { // HttpSecurity 는 낮은 버전(Spring Boot 버전)에서 호환되지 않음
+//        http
+//                .csrf().disable()
+//                .headers().frameOptions().disable()
+//                .and()
+//                .authorizeHttpRequests(authorize -> authorize
+//                        .antMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**", "/profile").permitAll()
+//                        .antMatchers("/api/v1/**").hasRole(Role.USER.name())
+//                .anyRequest().authenticated())
+//                .logout(logout -> logout
+//                        .logoutSuccessUrl("/"))
+//                .oauth2Login()
+//                        .userInfoEndpoint(oauth2Login -> oauth2Login
+//                        .userService(customOAuth2UserService));
+//        return http.build();
+//    }
+
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception{

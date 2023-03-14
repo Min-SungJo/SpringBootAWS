@@ -1,6 +1,6 @@
 buildscript {
     ext { // build.gradle 에서 사용하는 전역변수 설정
-        springBootVersion = '2.1.7.RELEASE'
+        springBootVersion = '2.1.9.RELEASE'
     }
     repositories {
         mavenCentral()
