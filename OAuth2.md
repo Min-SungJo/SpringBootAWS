@@ -24,7 +24,7 @@ https://developers.naver.com/apps/#/register?api=nvlogin
 애플리케이션 이름, 사용 API(네이버 로그인)   
 환경 설정(PC 웹)   
 서비스 URL(http://localhost:8080/)   
-Callback URL(http://localhost:8080/login/oauth2/code/naver.com)>
+Callback URL(http://localhost:8080/login/oauth2/code/naver)>
     > 구글에서 등록한 리디렉션 URL 과 같은 역할
 2. application-oauth.properties 에 클라이언트 ID 와 클라이언트 SECRET 등록
     > 네이버는 스프링 시큐리티를 공식 지원하지 않기 때문에 그동안 CommonOAuth2Provider 에서 설정해주던 값들을 수동으로 입력해야 함   
