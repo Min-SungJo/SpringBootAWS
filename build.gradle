@@ -32,6 +32,7 @@ dependencies { // 버전 명시를 생략해야 ext 에서 설정한 변수(버�
     implementation('com.h2database:h2') // 인메모리 관계형 데이터베이스, 별도의 설치 없이 프로젝트 의존성만으로 관리 가능, 메모리에서 실행(재시작시 초기화-테스트 용이)
     implementation('org.springframework.boot:spring-boot-starter-mustache') // 머스테치 의존성
     implementation('org.springframework.boot:spring-boot-starter-oauth2-client') // oauth2 관련 의존성
+    implementation('org.springframework.session:spring-session-jdbc') // 세션 저장소를 jdbc 로 설정하기 위한 의존성
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
 
