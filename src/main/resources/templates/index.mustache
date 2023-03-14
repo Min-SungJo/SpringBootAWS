@@ -20,6 +20,7 @@
             {{/userName}}
             {{^userName}} <!-- 값이 존재하지 않으면, 로그인 버튼을 노출하도록 -->
                 <a href="/oauth2/authorization/google" class="btn btn-success active" role="button">Google Login</a> <!-- 스프링 시큐리티에서 기본 제공하는 로그인 URL -->
+                <a href="/oauth2/authorization/naver" class="btn btn-secondary active" role="button">Naver Login</a> <!-- 네이버 로그인은 redirect-uri 값에 맞춰 자동 등록 -->
             {{/userName}}
         </div>
     </div>
