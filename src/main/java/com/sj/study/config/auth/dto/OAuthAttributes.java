@@ -3,9 +3,11 @@ package com.sj.study.config.auth.dto;
 import com.sj.study.domain.user.Role;
 import com.sj.study.domain.user.User;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.util.Map;
 
+@Getter
 public class OAuthAttributes {
     private Map<String, Object> attributes;
     private String nameAttributeKey;
