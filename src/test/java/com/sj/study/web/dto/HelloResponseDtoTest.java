@@ -1,6 +1,6 @@
 package com.sj.study.web.dto;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 // Junit 의 기본 assertThat 이 아닌 assertj 의 assertThat 을 사용한 이유
 // -> CoreMatchers 와 달리 추가적으로 라이브러리가 필요하지 않고 자동완성이 좀 더 확실히 지원됨
