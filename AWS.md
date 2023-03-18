@@ -31,7 +31,7 @@
 > 4. 탄력적 IP(AWS 의 고정 IP) 할당 -> 인스턴스를 중지하고 다시 시작할 때 새로운 IP 가 할당 되므로 접근할 때마다 IP 주소를 확인해야함->고정 IP 설정   
 > 주소와 인스턴스 연결(바로 연결하지 않으면 과금됨)
 > 5. Mac & Linux - 터미널
->    1. cp pem Downloads ~/.ssh/ 입력하여 pem 키를 복사함 (pem 을 Downloads 디렉토리에 저장했다는 가정)
+>    1. cp ~/Downloads/이름.pem ~/.ssh/ 입력하여 pem 키를 복사함 (pem 을 Downloads 디렉토리에 저장했다는 가정, cd ~/shh 로 확인)
 >    2. chmod 600 ~/.ssh/pem 키 이름.pem
 >    3. vim ~/.ssh/config   
 >       Host 서비스이름   
@@ -53,7 +53,9 @@
 >    6. Session>Saved Sessions 에 현재 설정 저장, Save
 >    7. Open
 > 7. Java 설치(필요한 버전), 타임존 변경(한국 시간대로), 호스트네임 변경(IP 만으로 서비스 용도를 파악하기 힘들기 때문)
->    > sudo rm /etc/localtime   
+>    > sudo yum install -y java-1.8.0-openjdk-devel.x86_64   
+       sudo /usr/sbin/alternatives --config java (해당하는 버전의 인덱스 입력 후 엔터)   
+       sudo rm /etc/localtime   
        sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime   
        date 로 시간확인   
 >    sudo -s root 권한 사용   
@@ -62,3 +64,21 @@
      hostnamectl set-hostname 이름   
      sudo reboot 로 서버 재부팅   
      ssh 서비스 이름 으로 접근, curl 이름 명령어로 등록 확인 (잘 되었으면 80 포트로 접근 안된다고 에러 발생)
+### AWS RDS 를 통해 AWS 에 데이터베이스 환경 구축
+DB를 직접 설치하지 않음   
+비용만 지불하면 많은 양의 데이터 처리 가능   
+> 1. RDS 인스턴스 생성 (퍼블릭 엑세스 가능)
+> 2. 운영환경에 맞는 파라미터 설정
+>   > 1. 파라미터 그룹 생성
+>   > 2. 파라미터 편집   
+>   > time_zone - Asia/Seoul   
+>   > character_set - utf8mb4
+>   > collation - utf8mb4_general_ci
+>   > max_connections - 150 (프리티어의 경우 약60개로 자동 설정 )
+>   > 데이터베이스, 체크 후 수정, DB 파라미터 그룹 적용 후 저장, 즉시 적용, 작업>재부팅(적용이 안 되면)
+>   > 인바운드 규칙에 MYSQL/Aurora 내 IP, EC2 추가
+> 3. IntelliJ Database 에 MariaDB 추가(엔드포인트 입력)
+> 4. MySQLCLI 설치 - 명령어 라인을 쓰기 위함임
+>   > sudo yum install mysql
+     mysql -u 계정 -p -h -Host주소(엔드포인트임)
+     터미널에서 show databases 를 통해 확인
