@@ -21,6 +21,7 @@ dependencies { // 버전 명시를 생략해야 ext 에서 설정한 변수(버�
     implementation('org.springframework.boot:spring-boot-starter-mustache') // 머스테치 의존성
     implementation('org.springframework.boot:spring-boot-starter-oauth2-client') // oauth2 관련 의존성
     implementation('org.springframework.session:spring-session-jdbc') // 세션 저장소를 jdbc 로 설정하기 위한 의존성
+    implementation('org.mariadb.jdbc:mariadb-java-client:2.7.3') // MariaDB 를 사용하기 위한 드라이버
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('org.springframework.security:spring-security-test')	// 테스트용 가짜 인증사용자 추가
 }

@@ -80,5 +80,112 @@ DB를 직접 설치하지 않음
 > 3. IntelliJ Database 에 MariaDB 추가(엔드포인트 입력)
 > 4. MySQLCLI 설치 - 명령어 라인을 쓰기 위함임
 >   > sudo yum install mysql
-     mysql -u 계정 -p -h -Host주소(엔드포인트임)
+     mysql -u 계정 -p -h Host주소(엔드포인트임)
      터미널에서 show databases 를 통해 확인
+### EC2 서버에 프로젝트 배포
+1. EC2에 프로젝트 Clone 받기
+   > sudo yum install git (EC2에 깃을 설치)   
+   > git --version 으로 확인   
+   > mkdir ~/app && mkdir ~/app/step1 (git clone 으로 프로젝트를 저장할 디렉토리를 생성)   
+   > cd ~/app/step1 (생성된 디렉토리로 이동)   
+   > 깃허브 웹페이지에서 https 주소 복사   
+   > git clone 복사한 주소   
+   > cd SpringBootAWS   
+   > ll   
+   > ./gradlew test 로 테스트   
+   > 테스트가 실패해서 수정하고 깃허브에 푸시했다면 git pull 입력   
+   > Permission denied 실행권한이 없다는 메시지가 뜨면, chmod +x ./gradlew
+2. 배포 스크립트 만들기   
+   배포란 작성한 코드를 실제 서버에 반영하는 것을 말한다
+   >    git clone 혹은 git pull 을 통해 새 버전의 프로젝트 받음   
+   >    Gradle 이나 Maven 을 통해 프로젝트 테스트와 빌드   
+   >    EC2 서버에서 해당 프로젝트 실행 및 재실행
+   >
+       위 과정을 배포할 때마다 개발자가 하나하나 명령어를 실행하는 것은 비효율적임   
+       따라서, 쉘 스크립트로 작성해 스크립트만 실행   
+       *쉘 스크립트는 .sh 라는 파일 확장자를 가진 파일, 리눅스에서 기본적으로 사용할 수 있는 스크립트 파일의 한 종류*
+       *빔은 리눅스환경과 같이 GUI 가 아닌 환경에서 사용할 수 있는 편집도구, 대중적임*
+   >    vim ~/app/step1/deploy.sh
+   > >   #!/bin/bash   
+   >    REPOSITORY=/home/ec2-user/app/step1   
+   >    *//프로젝트 디렉토리 주소는 스크립트 내에서 자주 사용하는 값이기 때문에 이를 변수로 저장*   
+   >    *//프로젝트 이름도 마찬가지임*   
+   >    *//쉘에서는 타입 없이 선언하여 저장*   
+   >    *//쉘에서는 $변수명 으로 변수를 사용할 수 있음*   
+   >    PROJECT_NAME=SpringBootAWS   
+   >    cd $REPOSITORY/$PROJECT_NAME/   
+   >    *//제일 처음 git clone 을 받았던 디렉토리로 이동*   
+   >    *//바로 위의 쉘 변수 설명을 따라 /home/ec2-user/app/step1/SpringBootAWS 주소로 이동*   
+   >    echo ">Git Pull" *//디렉토리 이동 후, master 브랜치의 최신 내용을 받음*   
+   >    git pull   
+   >    echo "> 프로젝트 Build 시작"   
+   >    ./gradlew build *//프로젝트 내부의 gradlew 로 build 를 수행*   
+   >    echo "> step1 디렉토리로 이동"   
+   >    cd $REPOSITORY
+   >    echo "> Build 파일 복사"   
+   >    cp $REPOSITORY/$PROJECT_NAME/build/libs/*.jar $REPOSITORY/ *//build 의 결과물인 jar 파일을 복사, jar 를 모아둔 위치로 복사*   
+   >    echo "> 현재 구동중인 애플리케이션 pid 확인"   
+   >    CURRENT_PID=$(pgrep -f ${PROJECT_NAME}.*.jar)   
+   >    *//기존에 수행 중이던 스프링 부트 애플리케이션을 종료*   
+   >    *//pgrep 은 process id 만 추출하는 명령어임*   
+   >    *//-f 옵션은 프로세스 이름으로 찾음*   
+   >    echo "현재 구동중인 애플리케이션 pid: $CURRENT_PID"
+   >    if [ -z "$CURRENT_PID ]; then   
+   >    *//현재 구동중인 프로세스가 있는지 없는지를 판단해서 기능을 수행*   
+   >    *//process id 값을 보고 프로세스가 있으면 해당 프로세스를 종료*   
+   >    echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다"   
+   >    else   
+   >    echo "> kill -15 $CURRENT_PID"   
+   >    kill -15 $CURRENT_PID   
+   >    sleep 5   
+   >    fi   
+   >    echo "> 새 애플리케이션 배포"   
+   >    JAR_NAME=$(ls -tr $REPOSITORY/ | grep jar | tail -n 1)   
+   >    *//새로 실행할 jar 파일명을 찾음*   
+   >    *//여러 jar 파일이 생기기 때문에 tail -n 로 가장 나중의 jar 파일(최신 파일)을 변수에 저장*   
+   >    echo "> JAR Name: $JAR_NAME"
+   >    nohup java -jar $REPOSITORY/$JAR_NAME 2>&1 &   
+   >    *//찾은 jar 파일명으로 해당 jar 파일을 nohup 으로 실행*   
+   >    *//스프링 부트의 장점으로 특별히 외장 톰캑을 설치할 필요가 없음*   
+   >    *//내장 톰캣을 사용해서 jar 파일만 있으면 바로 웹 애플리케이션 서버를 실행할 수 있음*   
+   >    *//일반적으로 자바를 실행할 때는 java -jar 라는 명령어를 사용, 이렇게 하면 사용자가 터미널 접속을 끊을 때 애플리케이션도 같이 종료*   
+   >    *//애플리케이션 실행자가 터미널을 종료해도 애플리케이션은 계속 구동될 수 있도록 nohup 명령어를 사용*
+   >
+   > chmod +x ./deploy.sh 스크립트에 실행 권한 추가   
+   > ll 로 확인   
+   > ./deploy.sh 로 실행   
+   > vim nohup.out 파일을 열어 로그 확인
+3. 외부 Security 파일 등록   
+   ClientRegistrationRepository 를 생성할 때 필요한 clientId, clientSecret 가 application-oauth.properties 에 있음   
+   위 파일은 .gitignore 에서 git 제외 대상으로 설정하여 깃허브에 올라가 있지 않음   
+   서버에서 직접 이 설정을 가지고 있게 할 필요가 있음   
+   *//Travis CI는 비공개 저장소를 사용할 경우 비용이 부과됨*
+   > 1. properties 파일 생성   
+        vim /home/ec2-user/app/application-oauth.properties   
+        local 에 있는 내용을 복사함
+   > 2. deploy.sh 수정
+        nohup. java -jar \
+        -Dspring.config.location=classpath:/application.properties,/home/ec2-user/app/application-oauth.properties \
+        $REPOSITORY/$JAR_NAME 2<&1 &   
+        *-Dspring.config.location 는 스프링 설정 파일 위치를 지정, classpath 가 붙으면 jar 안에 있는 resources 디렉토리를 기준으로 경로가 생성, application-oauth.properties 는 외부에 파일이 있기 때문에 절대경로를 사용함*
+4. 스프링 부트 프로젝트로 RDS 접근
+   1. 테이블 생성
+      > H2 에서 자동 생성해주던 테이블들을 MariaDB 에선 직접 쿼리를 이용해 생성   
+      스프링 세션 테이블을 복사 - Command Shift O / Ctrl Shift N > schema-mysql.sql
+   2. 프로젝트 설정
+      > 자바 프로젝트가 MariaDB에 접근하려면 데이터베이스 드라이버가 필요함.   
+      MariaDB 에서 사용 가능한 드라이버를 프로젝트에 추가   
+      gradle.build 에 MariaDB Driver 의존성 등록   
+      > > implementation('org.mariadb.jdbc:mariadb-java-client:버전')
+      > 
+      > src/main/resources 에 application-real.properties 생성   
+      > > spring.profiles.include=oauth, real-db   
+      spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect   
+      spring.session.store-type=jdbc
+      
+   3. EC2(리눅스 서버) 설정
+      > 데이터베이스의 접속 정보는 중요하게 보호해야 할 정보임.   
+      공개되면 외부에서 데이터를 모두 가져갈 수 있기 때문.   
+      프로젝트 안에 접속 정보를 갖고 있다면 깃허브와 같이 오픈된 공간에선 누구나 해킹할 위험이 있음.   
+      EC2 서버 내부에서 접속 정보를 관리하도록 설정
+   
