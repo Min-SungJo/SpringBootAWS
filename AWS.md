@@ -188,4 +188,14 @@ DB를 직접 설치하지 않음
       공개되면 외부에서 데이터를 모두 가져갈 수 있기 때문.   
       프로젝트 안에 접속 정보를 갖고 있다면 깃허브와 같이 오픈된 공간에선 누구나 해킹할 위험이 있음.   
       EC2 서버 내부에서 접속 정보를 관리하도록 설정
+      > vim ~/app/application-real-db.properties 으로 설정파일 생성
+      > >spring.jpa.hibernate.ddl-auto=none   
+      > *JPA로 테이블이 자동 생성되는 옵션을 지정*   
+      > *RDS 에는 실제 운영으로 사용될 테이블이니 절대 스프링 부트에서 새로 만들지 않도록 해야함*   
+      > *이 옵션을 선택하지 않으면 테이블이 모두 새로 생성될 수 있으니 주의!*   
+      > spring.datasource.url=jdbc:mariadb: //rds주소:포트명(기본은3306)   
+      > database이름   
+      > spring.datasource.username=db 계정   
+      > spring.datasource.password=db 계정 비밀번호   
+      > spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
    
