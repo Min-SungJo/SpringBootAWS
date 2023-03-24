@@ -193,9 +193,22 @@ DB를 직접 설치하지 않음
       > *JPA로 테이블이 자동 생성되는 옵션을 지정*   
       > *RDS 에는 실제 운영으로 사용될 테이블이니 절대 스프링 부트에서 새로 만들지 않도록 해야함*   
       > *이 옵션을 선택하지 않으면 테이블이 모두 새로 생성될 수 있으니 주의!*   
-      > spring.datasource.url=jdbc:mariadb: //rds주소:포트명(기본은3306)   
-      > database이름   
+      > spring.datasource.url=jdbc:mariadb: //rds 주소:포트명(기본은3306)   
+      > database 이름   
       > spring.datasource.username=db 계정   
       > spring.datasource.password=db 계정 비밀번호   
       > spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
+      > deploy.sh 수정 - (real profile 쓸 수 있게)> > nohup java -jar \   
+      > -Dspring.config.location=classpath:/application.properties,/home/ec2-user/app/application-oauth.properties,/home/ec2-user/app/application-real-db.properties,classpath:/application-real.properties \   
+      -Dspring.profiles.active=real \   
+      $REPOSITORY/$JAR_NAME 2>&1 &   
+      *-Dspring.profiles.active=real 은 application-real.properties 를 활성화시킴*   
+      *application-real.properties 의 spring.profiles.include=oauth,real-db 옵션 때문에 real-db 역시 함께 활성화 대상에 포함됨*
+      >
+      > nohup.out 파일에 다음과 같은 로그가 뜨면 성공임
+      > > Tomcat started on port(s): 8080 (http) with context path ''   
+      > Started Application in ~~ seconds (JVM running for ~~~)
+      >
+      > curl 명령어로 html 코드가 정상적으로 보이면 성공임
+      > > curl localhost:8080
    
