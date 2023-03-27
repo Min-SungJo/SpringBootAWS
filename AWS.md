@@ -197,8 +197,10 @@ DB를 직접 설치하지 않음
       > database 이름   
       > spring.datasource.username=db 계정   
       > spring.datasource.password=db 계정 비밀번호   
-      > spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-      > deploy.sh 수정 - (real profile 쓸 수 있게)> > nohup java -jar \   
+      > spring.datasource.driver-class-name=org.mariadb.jdbc.Driver   
+      >
+      > deploy.sh 수정 - (real profile 쓸 수 있게)
+      > > nohup java -jar \   
       > -Dspring.config.location=classpath:/application.properties,/home/ec2-user/app/application-oauth.properties,/home/ec2-user/app/application-real-db.properties,classpath:/application-real.properties \   
       -Dspring.profiles.active=real \   
       $REPOSITORY/$JAR_NAME 2>&1 &   
