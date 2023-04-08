@@ -79,7 +79,7 @@ DB를 직접 설치하지 않음
 >   > 인바운드 규칙에 MYSQL/Aurora 내 IP, EC2 추가
 > 3. IntelliJ Database 에 MariaDB 추가(엔드포인트 입력)
 > 4. MySQLCLI 설치 - 명령어 라인을 쓰기 위함임
->   > sudo yum install mysql
+>   > sudo yum install mysql   
      mysql -u 계정 -p -h Host주소(엔드포인트임)
      터미널에서 show databases 를 통해 확인
 ### EC2 서버에 프로젝트 배포
@@ -171,7 +171,8 @@ DB를 직접 설치하지 않음
 4. 스프링 부트 프로젝트로 RDS 접근
    1. 테이블 생성
       > H2 에서 자동 생성해주던 테이블들을 MariaDB 에선 직접 쿼리를 이용해 생성   
-      스프링 세션 테이블을 복사 - Command Shift O / Ctrl Shift N > schema-mysql.sql
+      스프링 세션 테이블을 복사 - Command Shift O / Ctrl Shift N > schema-mysql.sql   
+      posts, users 테이블 또한 생성
    2. 프로젝트 설정
       > 자바 프로젝트가 MariaDB에 접근하려면 데이터베이스 드라이버가 필요함.   
       MariaDB 에서 사용 가능한 드라이버를 프로젝트에 추가   
@@ -193,8 +194,7 @@ DB를 직접 설치하지 않음
       > *JPA로 테이블이 자동 생성되는 옵션을 지정*   
       > *RDS 에는 실제 운영으로 사용될 테이블이니 절대 스프링 부트에서 새로 만들지 않도록 해야함*   
       > *이 옵션을 선택하지 않으면 테이블이 모두 새로 생성될 수 있으니 주의!*   
-      > spring.datasource.url=jdbc:mariadb: //rds 주소:포트명(기본은3306)   
-      > database 이름   
+      > spring.datasource.hikari.jdbc-url=jdbc:mariadb://rds 주소:포트명(기본은3306)/database 이름   
       > spring.datasource.username=db 계정   
       > spring.datasource.password=db 계정 비밀번호   
       > spring.datasource.driver-class-name=org.mariadb.jdbc.Driver   
@@ -204,7 +204,7 @@ DB를 직접 설치하지 않음
       > -Dspring.config.location=classpath:/application.properties,/home/ec2-user/app/application-oauth.properties,/home/ec2-user/app/application-real-db.properties,classpath:/application-real.properties \   
       -Dspring.profiles.active=real \   
       $REPOSITORY/$JAR_NAME 2>&1 &   
-      *-Dspring.profiles.active=real 은 application-real.properties 를 활성화시킴*   
+      *-Dspring.profiles.active=real 은 application-real-db.properties 를 활성화시킴*   
       *application-real.properties 의 spring.profiles.include=oauth,real-db 옵션 때문에 real-db 역시 함께 활성화 대상에 포함됨*
       >
       > nohup.out 파일에 다음과 같은 로그가 뜨면 성공임
@@ -213,4 +213,15 @@ DB를 직접 설치하지 않음
       >
       > curl 명령어로 html 코드가 정상적으로 보이면 성공임
       > > curl localhost:8080
-   
+5. EC2 에서 소셜 로그인하기   
+   해당 포트가 AWS 의 보안그룹에서 허용하고 있는지 확인
+   > 인바운드 규칙 -> IPv4, IPv6 
+   >
+   이후, AWS EC2 도메인으로 접속 -> 구글 및 네이버에 서비스를 등록해야 작동함
+   1. 구글에 EC2 주소 등록
+      > 구글 웹 콘솔(https://console.cloud.google.com/home/dashboard)   
+      > API 및 서비스 > 사용자 인증 정보 > OAuth 동의 화면 > 승인된 도메인에 추가
+      > > AWS EC2 도메인 (http:// 제외)
+      > 
+      > 승인된 리디렉션 URI 에 URI 등록
+      > > 퍼블릭 DNS 주소:8080/login/oauth2/code/google
