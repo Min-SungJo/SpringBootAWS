@@ -225,3 +225,10 @@ DB를 직접 설치하지 않음
       > 
       > 승인된 리디렉션 URI 에 URI 등록
       > > 퍼블릭 DNS 주소:8080/login/oauth2/code/google
+   2. 네이버에 EC2 주소 등록
+      > 네이버 개발자 센터(https://developers.naver.com/apps/#/myapps)   
+      > API > 서비스 URL
+      > > DNS
+      > 
+      > Callback URL 등록
+      > > DNS:8080/login/oauth2/code/naver
