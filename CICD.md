@@ -20,4 +20,5 @@
 깃허브에서 제공하는 무료 CI 서비스   
 *젠킨스는 설치형이기 때문에 이를 위한 EC2 인스턴스가 하나 더 필요함*
 1. https://travis-ci.org/ > 깃허브 계정 로그인 > 계정명 > Settings > Repository 선택
-2. .travis.yaml 생성, pull push -> travis 확인
+2. travis plan 설정 및 이메일 인증 진행
+3. CI를 진행할 .travis.yaml 생성, pull push -> travis 확인
