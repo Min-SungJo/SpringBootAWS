@@ -22,3 +22,7 @@
 1. https://travis-ci.org/ > 깃허브 계정 로그인 > 계정명 > Settings > Repository 선택
 2. travis plan 설정 및 이메일 인증 진행
 3. CI를 진행할 .travis.yaml 생성, pull push -> travis 확인
+
+## 3. Travis 와 AWS S3 연동
+배포를 담당하는 CodeDeploy 에 저장기능이 없기 때문에 S3 를 통해 Jar 파일을 전달   
+S3 는 일종의 파일서버임
