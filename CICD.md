@@ -54,3 +54,42 @@ S3 는 일종의 파일서버임
    > local_dir: deploy # before_deploy 에서 생성한 디렉토리, 해당 위치의 파일들만 s3 로 전송   
    > wait-until-deploy: true   
    >
+4. Travis CI 와 AWS S3, CodeDeploy 연동
+CodeDeploy 는 AWS 의 배포 시스템,   
+EC2 가 CodeDeploy 를 연동받을 수 있도록 IAM 역할 생성
+   1. EC2 에 IAM 역할 추가하기
+      > AWS 서비스 -> EC2 > 정책 선택 > AmazonEC2RoleForAWS-CodeDeploy   
+      EC2 인스턴스 설정의 IAM 역할 연결/바꾸기를 통해 서비스 등록   
+      EC2 에 접속, 명령어 입력하여 에이전트 설치(CodeDeploy 요청 받을 수 있게)
+      > > aws s3 cp s3://aws-codedeploy-ap-northeast-2/latest/install . --region ap-northeast-2   
+      >
+      > chmod 로 install 파일 실행 권한 추가
+      > > chmod +x ./install
+      > 
+      > install 파일 설치 진행 (sudo yum install ruby 를 통해 ruby 설치)
+      > > sudo ./install auto
+      > 
+      > Agent 가 정상적으로 실행되고 있는지 확인
+      > > sudo service codedeploy-agent status
+      > 
+   2. CodeDeploy 를 위한 권한 생성   
+      CodeDeploy 에서 EC2 에 접근하기 위한 IAM 권한 생성
+      > AWS 서비스 -> CodeDeploy
+      > 
+   3. CodeDeploy 생성
+      AWS 에서 배포를 담당하는 3가지 서비스   
+      - Code Commit
+        > 깃허브와 같은 코드 저장소 역할   
+        프라이빗 기능을 지원하는 강점(현재 깃허브에서 무료로 제공하기 때문에 굳이 CodeCommit 사용 X)   
+      - Code Build
+        > Travis CI 와 마찬가지로 빌드용 서비스   
+        멀티 모듈을 배포해야 하는 경우 사용해 볼만하지만, 규모가 있는 서비스에서는 대부분 젠킨스/팀시티 등을 이용함(굳이 사용 X)
+      - CodeDeploy
+        > AWS 배포 서비스   
+        대체재가 없음   
+        오토스케일링 그룹 배포, 블루 그린 배포, 롤링 배포, EC2 단독 배포 등 많은 기능을 지원함   
+        > 
+      애플리케이션 생성 > 컴퓨팅 플랫폼 - EC2/온프레미스 > 배포그룹 생성 > 서비스 역할 선택 > 배포유형 - 현재위치   
+      환경구성 > Amazon EC2 인스턴스, 해당 키, 값 선택   
+      배포설정 > 배포구성 - CodeDeployDefault.AllAtOnce , 로드밸런싱 비활성화   
+      *배포구성이란? 한 번 배포할 때 몇 대의 서버에 배포할지를 결정
