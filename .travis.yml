@@ -17,4 +17,4 @@ script: "./gradlew clean build" # master 브랜치에 push 되었을 때 수행,
 notifications: # Travis CI 실행 완료 시 알람
   email:
     recipients:
-      - 123or@naver.com
+      - 123or@naver.com # 확인할 메일계정
