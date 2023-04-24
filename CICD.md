@@ -26,3 +26,11 @@
 ## 3. Travis 와 AWS S3 연동
 배포를 담당하는 CodeDeploy 에 저장기능이 없기 때문에 S3 를 통해 Jar 파일을 전달   
 S3 는 일종의 파일서버임
+1. aws IAM > 사용자 > 사용자 추가 > 사용자 명 입력 > 직접 정책 연결 > 태그 등록
+    > 정책 이름   
+    AmazoneS3FullAccess   
+    AWSCodeDeployFullAccess
+2. 액세스키 생성 및 등록
+    > AWS 외부에서 실행되는 애플리케이션 설정으로 생성,   
+    travis 에서 해당 repository settings 의 Environment Variables 에 기입하기(2가지 기입)   
+    여기에 기입된 값은 .travis.yml 에서 $AWS_ACCESS_KEY, $AWS_SECRET_KEY 로 사용(둘 다 위에서 기입한 이름임)
