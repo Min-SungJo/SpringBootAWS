@@ -93,3 +93,33 @@ EC2 가 CodeDeploy 를 연동받을 수 있도록 IAM 역할 생성
       환경구성 > Amazon EC2 인스턴스, 해당 키, 값 선택   
       배포설정 > 배포구성 - CodeDeployDefault.AllAtOnce , 로드밸런싱 비활성화   
       *배포구성이란? 한 번 배포할 때 몇 대의 서버에 배포할지를 결정
+   4. Travis CI, S3, CodeDeploy 연동
+      1. S3 에서 넘겨줄 zip 파일이 담길 디렉토리 하나 생성
+         > mkdir ~/app/step2 && mkdir ~/app/step2/zip
+         >
+         Travis CI 의 Build 가 끝나면 S3 에 zip 파일이 전송되고, 이 zip 파일은   
+         /home/ec2-user/app/step2/zip 으로 복사되어 압축을 풀 예정임
+         AWS CodeDeploy 의 설정은 appspec.yml 을 생성하여 진행
+      2. appspec.yml 생성
+         > version: 0.0 # CodeDeploy 버전 표기   
+         os: linux   
+         files:   
+         -source: / # CodeDeploy 에서 전달해준 파일 중 destination 으로 이동시킬 대상을 지정, 루트경로지정 -> 전체 파일   
+         destination: /home/ec2-user/app/step2/zip/ # source 에서 지정된 파일을 받을 위치, 이후 Jar 를 실행하는 등은 destination 에서 옮긴 파일들로 진행   
+         overwrite: yes # 기존에 파일들이 있으면 덮어쓸지를 결정, yes -> 덮어씀   
+         > 
+      3. .travis.yml 에도 CodeDeploy 내용을 추가
+         > -provider: codedeploy   
+               access_key_id: $AWS_ACCESS_KEY # Travis repo settings 에 설정된 값   
+               secret_access_key: $AWS_SECRET_KEY   
+               bucket: freelec-springboot-build-springbootaws # 버킷 명   
+               key: freelec-springboot2-webservice.zip # 빌드 파일을 압축해서 전달   
+               bundle_type: zip # 압축 확장자   
+               application: freelec-springboot2-webservice # CodeDeploy 애플리케이션 명   
+               deployment_group: freelec-springboot2-webservice-group # CodeDeploy 배포 그룹 명   
+               region: ap-northeast-2   
+               wait-until-deployed: true   
+         > 
+      명령어를 통해 파일이 잘 도착했는지 확인
+      > cd /home/ec2-user/app/step2/zip   
+      ll
