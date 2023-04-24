@@ -123,3 +123,59 @@ EC2 가 CodeDeploy 를 연동받을 수 있도록 IAM 역할 생성
       명령어를 통해 파일이 잘 도착했는지 확인
       > cd /home/ec2-user/app/step2/zip   
       ll
+      > 
+   5. 배포 자동화 구성
+      Jar 배포부터 실행까지
+      1. step2 환경에서 실행될 deploy.sh 파일 생성
+         최상위 디렉토리에 scripts/deploy.sh 생성하여 스크립트 작성
+         step1 에서 작성된 deploy.sh 와 큰 차이가 없음
+         > #!/bin/bash
+         > REPOSITORY=/home/ec2-user/app/step2   
+         > PROJECT_NAME=SpringBootAWS   
+         > echo "> Build 파일 복사"   
+         > cp $REPOSITORY/zip/*.jar $REPOSITORY/   
+         > echo "> 현재 구동 중인 애플리케이션 pid 확인"   
+         > CURRENT_PID=$(pgrep -fl freelec-springboot2-webservice | grep jar | awk '{print $1}')   
+         > #현재 실행 중인 스프링 부트 애플리케이션의 PID 를 찾아서 종료하기, 이름이 같을 수 있기 때문에, 실행중인 jar 프로세스 탐색   
+         > echo "현재 구동 중인 애플리케이션 pid: $CURRENT_PID"
+         if [ -z "$CURRENT_PID" ]; then   
+         echo "> 현재 구동 중인 애플리케이션이 없으므로 종료하지 않습니다."   
+         else   
+         echo "> kill -15 $CURRENT_PID"   
+         kill -15 $CURRENT_PID   
+         sleep 5   
+         fi   
+         echo "> 새 애플리케이션 배포"   
+         JAR_NAME=$(ls -tr $REPOSITORY/*.jar | tail -n 1)   
+         echo "> JAR Name: $JAR_NAME"   
+         echo "> $JAR_NAME 에 실행권한 추가"   
+         chmod +x $JAR_NAME   
+         #Jar 파일은 실행 권한이 없는 상태, nohup 으로 실행할 수 있게 실행 권한을 부여   
+         echo "> $JAR_NAME 실행"   
+         nohup java -jar \   
+         -Dspring.config.location=classpath:/application.properties,classpath:/applicationn-real.properties,/home/ec2-user/app/application-oauth.properties,/home/ec2-user/app/application-real-db.properties \   
+         -Dspring.properties.profiles.active=real \   
+         $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &   
+         #nohup 실행 시, CodeDeploy 가 무한 대기하는 이슈(nohup 이 끝나기 전까지 CodeDeploy 도 끝나지 않음)를 해결하기 위해 nohup.out 파일을 표준 입출력용으로 별도로 사용함   
+         #이렇게 하지 않으면 nohup.out 파일이 생기지 않고, codeDeploy 로그에 표준 입출력이 출력됨
+      2. .travis.yml 수정
+         현재, 프로젝트의 모든 파일을 zip 로 만드는 데 필요한 파일은 Jar, appspec.yml, 배포를 위한 스크립트임.   
+         > -mkdir -p before-deploy # zip 에 포함시킬 파일들을 담을 디렉토리 생성, travis CI 는 S3 로 특정 파일만 업로드가 불가(디렉토리 단위만 업로드 가능하기에 디렉토리 항상 생성)   
+         -cp scripts/*.sh before-deploy/ # before-deploy 에 zip 파일에 포함시킬 파일들을 저장   
+         -cp appspec.yml before-deploy/   
+         -cp build/libs/*.jar before-deploy/   
+         -cp before-deploy && zip -r before-deploy * # before-deploy 로 이동 후 전체 압축, zip -r 명령어를 통해 before-deploy 디렉토리 전체 파일을 압축   
+         -cd ../ && mkdir -p deploy # 상위 디렉토리로 이동 후 deploy 디렉토리 생성   
+         -mv before-deploy/before-deploy.zip deploy/freelec-springboot2-webservice.zip # deploy 로 zip 파일 이동   
+      3. appspec.yml 수정
+         (location, timeout, runas 들여쓰기 주의)   
+         > permissions:   
+         -object: /   
+         pattern: "**"   
+         owner: ec2-user   
+         group: ec2-user
+         hooks:   
+         ApplicationStart:   
+         -location: deploy.sh   
+         timeout: 60   
+         runas: ec2-user   
