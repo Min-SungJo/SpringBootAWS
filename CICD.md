@@ -34,3 +34,23 @@ S3 는 일종의 파일서버임
     > AWS 외부에서 실행되는 애플리케이션 설정으로 생성,   
     travis 에서 해당 repository settings 의 Environment Variables 에 기입하기(2가지 기입)   
     여기에 기입된 값은 .travis.yml 에서 $AWS_ACCESS_KEY, $AWS_SECRET_KEY 로 사용(둘 다 위에서 기입한 이름임)
+3. S3 버킷 생성
+    > 버킷 생성 후, Travis CI 에서 빌드하여 만든 Jar 파일을 S3 에 올릴 수 있게   
+    .travis.yml 에 코드 추가   
+    > >...   
+   > before_deploy:   
+   > -zip -r freelec-springboot2-webservice * # 현재 위치의 모든 파일을 압축(freelec-springboot2-webservice.zip)   
+   > -mkdir -p deploy # deploy 라는 이름의 디렉토리 생성   
+   > -mv freelec-springboot2-webservice.zip deploy/freelec-springboot2-webservice.zip # 파일 이동   
+   >  S3, CodeDeploy 로 배포 등 외부 서비스와 연동될 행위 선언   
+   > deploy:   
+   > -provider: s3   
+   > access_key_id: $AWS_ACCESS_KEY # Travis repo settings 에 설정된 값   
+   > secret_access_key: $AWS_SECRET_KEY   
+   > bucket: freelec-springboot-build-springbootaws # 버킷 명   
+   > region: ap-northeast-2   
+   > skip_cleanup: true   
+   > acl: private # zip 파일 접근을 private 로   
+   > local_dir: deploy # before_deploy 에서 생성한 디렉토리, 해당 위치의 파일들만 s3 로 전송   
+   > wait-until-deploy: true   
+   >
