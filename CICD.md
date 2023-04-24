@@ -179,3 +179,5 @@ EC2 가 CodeDeploy 를 연동받을 수 있도록 IAM 역할 생성
          -location: deploy.sh   
          timeout: 60   
          runas: ec2-user   
+      4. 배포 확인
+         build.gradle 에서 프로젝트 버전 수정, index.mustache 내용 수정
