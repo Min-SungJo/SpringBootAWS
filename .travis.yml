@@ -25,7 +25,7 @@ before_deploy:
   - cp scripts/*.sh before-deploy/ # before-deploy 에 zip 파일에 포함시킬 파일들을 저장
   - cp appspec.yml before-deploy/
   - cp build/libs/*.jar before-deploy/
-  - cp before-deploy && zip -r before-deploy * # before-deploy 로 이동 후 전체 압축, zip -r 명령어를 통해 before-deploy 디렉토리 전체 파일을 압축
+  - cd before-deploy && zip -r before-deploy * # before-deploy 로 이동 후 전체 압축, zip -r 명령어를 통해 before-deploy 디렉토리 전체 파일을 압축
   - cd ../ && mkdir -p deploy # 상위 디렉토리로 이동 후 deploy 디렉토리 생성
   - mv before-deploy/before-deploy.zip deploy/freelec-springboot2-webservice.zip # deploy 로 zip 파일 이동
 # S3, CodeDeploy 로 배포 등 외부 서비스와 연동될 행위 선언
