@@ -222,4 +222,26 @@ EC2 가 CodeDeploy 를 연동받을 수 있도록 IAM 역할 생성
    > 구동 확인   
    > sudo service nginx start   
    > 보안 그룹   
-   > EC2 > ec2 보안그룹 편집 > 인바운드 규칙 편집 > 80 추가 (IP4, IP6)
+   > EC2 > ec2 보안그룹 편집 > 인바운드 규칙 편집 > 80 추가 (IP4, IP6)가
+2. 구글 및 네이버에서 리다이렉션 주소 추가(Nginx -> 80)
+   > 구글   
+   > 사용자 인증 정보 > OAuth 클라이언트 수정 > 승인된 리디렉션 URI 추가   
+   > http://ec2-43-200-89-72.ap-northeast-2.compute.amazonaws.com/login/oauth2/code/google   
+   > 네이버
+   > API 설정 > Callback URL 에 추가   
+   > http://ec2-43-200-89-72.ap-northeast-2.compute.amazonaws.com/login/oauth2/code/naver
+   > 
+3. 엔진엑스와 스프링 부트 연동   
+   엔진엑스가 현재 구동 중인 스프링 부트 프로젝트를 바라볼 수 있게 프록시 설정
+   > sudo vim /etc/nginx/nginx.conf > server{...include 아래에 추가   
+   >location / {   
+   proxy_pass http://localhost:8080; # 엔진엑스로 요청이 오면 http://localhost:8080으로 전달   
+   proxy_set_header X-Rreal-IP $remote_addr;   
+   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # 실제 요청 데이터를 header 의 각 항목에 할당   
+   proxy_set_header Host $http_host;   
+   }   
+   -> proxy_set_header X-Real_IP $remote_addr: Request Header 의 X-Real-IP 에 사용자의 IP 를 저장
+   >
+   엔진엑스 재시작
+   > sudo service nginx restart
+   > 
