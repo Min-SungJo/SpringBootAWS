@@ -247,4 +247,5 @@ EC2 가 CodeDeploy 를 연동받을 수 있도록 IAM 역할 생성
    > 
 4. 무중단 배포 스크립트 만들기   
 먼저, 배포 시 8081을 쓸지, 8082를 쓸지 판단하는 기준이 될 API 추가
-   > ProfileController 추가 및 ProfileControllerUnitTest 작성(스프링 환경이 필요하지 않으므로 @SpringBootTest 없이 작성)
+   > ProfileController 추가 및 ProfileControllerUnitTest 작성(스프링 환경이 필요하지 않으므로 @SpringBootTest 없이 작성)   
+   > 스프링 시큐리티 설정을 포함한 ProfileControllerTest 추가(스프링 환경이 필요하므로 @SpringBootTest 사용)
