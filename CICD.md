@@ -246,6 +246,9 @@ EC2 가 CodeDeploy 를 연동받을 수 있도록 IAM 역할 생성
    > sudo service nginx restart
    > 
 4. 무중단 배포 스크립트 만들기   
-먼저, 배포 시 8081을 쓸지, 8082를 쓸지 판단하는 기준이 될 API 추가
-   > ProfileController 추가 및 ProfileControllerUnitTest 작성(스프링 환경이 필요하지 않으므로 @SpringBootTest 없이 작성)   
-   > 스프링 시큐리티 설정을 포함한 ProfileControllerTest 추가(스프링 환경이 필요하므로 @SpringBootTest 사용)
+   1. 배포 시 8081을 쓸지, 8082를 쓸지 판단하는 기준이 될 API 추가
+      > ProfileController 추가 및 ProfileControllerUnitTest 작성(스프링 환경이 필요하지 않으므로 @SpringBootTest 없이 작성)   
+      > 스프링 시큐리티 설정을 포함한 ProfileControllerTest 추가(스프링 환경이 필요하므로 @SpringBootTest 사용)
+      > 
+   2. 무중단 배포를 위한 real1(8081), real2(8082) profile 생성 - src/main/resources   
+      (현재는 EC2 환경에서 실행되는 real profile(8080)뿐임 - Travis CI 배포 자동화를 위한 것)
