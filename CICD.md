@@ -255,3 +255,9 @@ EC2 가 CodeDeploy 를 연동받을 수 있도록 IAM 역할 생성
    3. 엔진엑스 설정 수정 - /etc/nginx/conf.d/ 에 service-url.inc 생성
       > sudo vim /etc/nginx/conf.d/service-url.inc   
       > set $service_url http://127.0.0.1:8080;
+      > location / 부분 변경
+      > include /etc/nginx/conf.d/service-url.inc;   
+      > location / {   
+      > proxy_pass $service_url;   
+      > 재시작   
+      > sudo service nginx restart
