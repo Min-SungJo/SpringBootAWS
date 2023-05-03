@@ -261,3 +261,14 @@ EC2 가 CodeDeploy 를 연동받을 수 있도록 IAM 역할 생성
       > proxy_pass $service_url;   
       > 재시작   
       > sudo service nginx restart
+   4. 배포 스크립트 작성
+      > step2와 중복되지 않게 step3에 디렉토리를 생성하고 스크립트를 작성   
+      > mkdir ~/app/step3 && mkdir ~/app/step3/zip   
+      > appspec.yml 이 step3로 배포되도록 수정   
+      >
+      무중단 배포에 필요한 스크립트 5개
+      1. stop.sh 기존 엔진엑스에 연결되어 있진 않지만, 실행중이던 스프링부트 종료
+      2. start.sh 배포할 신규 버전 스프링 부트 프로젝트를, 'profile' 를 통해 stop.sh 로 종료하고 실행 
+      3. health.sh 앞에서 실행시킨 프로젝트가 정상적으로 실행되었는지 체크
+      4. switch.sh 엔진엑스가 바라보는 스프링 부트를 최신 버전으로 변경
+      5. profile.sh 앞서 작성한 스크립트에서 공용으로 사용할 'profile' 작성 및 포트 체크 로직 작성
