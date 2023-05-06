@@ -254,8 +254,8 @@ EC2 가 CodeDeploy 를 연동받을 수 있도록 IAM 역할 생성
       (현재는 EC2 환경에서 실행되는 real profile(8080)뿐임 - Travis CI 배포 자동화를 위한 것)
    3. 엔진엑스 설정 수정 - /etc/nginx/conf.d/ 에 service-url.inc 생성
       > sudo vim /etc/nginx/conf.d/service-url.inc   
-      > set $service_url http://127.0.0.1:8080;
-      > location / 부분 변경
+      > set $service_url http://127.0.0.1:8080;   
+      > sudo vim /etc/nginx/conf.d 에서 location / 부분 변경   
       > include /etc/nginx/conf.d/service-url.inc;   
       > location / {   
       > proxy_pass $service_url;   
