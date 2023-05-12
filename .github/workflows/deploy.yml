@@ -1,0 +1,29 @@
+name: SpringBootAWS
+
+on:
+  push:
+    branches:
+      - master # 현재 만드는 Github Action 의 트리거 브랜치를 지, 표기한 브랜치가 push 되면 Github Action 이 실행됨
+  workflow_dispatch: # 브랜치 push 외에 수동으로 실행가능하게 만드는 옵션
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # 해당 Github Action 스크립트가 작동될 OS 환경을 지정(GithubAction 은 CentOS 지원x -> Ubuntu)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2 # 프로젝트 코드를 checkout
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1 # GithubAction 이 실행될 OS에 Java 설치, with: java-version: 1.8 로 메이저 버전을 설치할 수 있으며 11, 13 등 버전들도 설치 가능
+        with:
+          java-version: 1.8
+      # https://github.com/marketplace/actions/setup-java-jdk 참조
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew # gradle wrapper 를 실행할 수 있도록 실행 권한 (+x)을 줌
+        shell: bash
+
+      - name: Build with Gradle
+        run: ./gradlew clean build # gradle wrapper 를 통해 해당 프로젝트를 build
+        shell: bash
