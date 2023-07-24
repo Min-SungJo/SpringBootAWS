@@ -11,6 +11,11 @@ repositories {
     mavenCentral()
     // jcenter() 지원 종료
 }
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
 
 dependencies { // 버전 명시를 생략해야 ext 에서 설정한 변수(버전) 적용 가능
     implementation('org.springframework.boot:spring-boot-starter-web')
