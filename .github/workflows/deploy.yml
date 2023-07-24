@@ -27,3 +27,14 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build # gradle wrapper 를 통해 해당 프로젝트를 build
         shell: bash
+
+      - name: Get current time
+        uses: 1466587594/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYY-MM-DDTHH-mm-ss # action 이 지원하는 Momentjs 와 동일한 포맷 사용
+          utcOffset: "+09:00" # 한국 시간에 맞게 9시간 추가
+
+      - name: Show Current Time
+        run: echo "CurrentTime=${{steps.currnet-time.outputs.formattedTime}}" # get-current-time 에서 지정한 포맷대로 현재 시간을 노출
+        shell: bash
